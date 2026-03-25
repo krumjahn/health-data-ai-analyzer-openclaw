@@ -1,7 +1,7 @@
 interface:
   display_name: "Health Data AI Analyzer"
-  short_description: "Read local Apple Health briefs and trends from the Health Data AI Analyzer Mac app"
-  default_prompt: "Use $health-analyzer-mac-local for this request. Read the latest local Apple Health brief from the Health Data AI Analyzer Mac app and answer with a concise summary and practical non-medical suggestions."
+  short_description: "Turn local Apple Health data into short daily briefs and practical suggestions"
+  default_prompt: "Use $health-analyzer-mac-local for this request. Read the latest local Apple Health brief from the Health Data AI Analyzer Mac app and answer with a concise summary of what changed plus practical non-medical suggestions."
 
 policy:
   allow_implicit_invocation: true

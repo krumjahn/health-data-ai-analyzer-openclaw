@@ -1,6 +1,6 @@
 ---
 name: health-analyzer-mac-local
-description: Use the Health Data AI Analyzer Mac app with OpenClaw to read your latest Apple Health daily brief, compare recent sleep and steps, and return concise non-medical suggestions from data stored on your Mac.
+description: Use the Health Data AI Analyzer Mac app with OpenClaw to read your Apple Health data, summarize what changed, and give short practical suggestions. Example: "Steps were 2,444 vs a 7-day baseline of 10,005. Add one easy walk today and keep effort moderate."
 homepage: https://github.com/krumjahn/health-data-ai-analyzer-openclaw
 user-invocable: true
 command-dispatch: tool
@@ -16,6 +16,7 @@ Use it for:
 - daily health briefs
 - 3 practical non-medical suggestions
 - simple recent step and sleep comparisons
+- short daily OpenClaw messages based on the latest saved analysis
 
 Requirements:
 - the macOS app `Health Data AI Analyzer` is installed

@@ -39,7 +39,28 @@ Name:
 
 Short description:
 
-`Use the Health Data AI Analyzer Mac app with OpenClaw to read daily Apple Health briefs, compare recent trends, and get concise practical suggestions.`
+`Use the Health Data AI Analyzer Mac app with OpenClaw to read your Apple Health data, summarize what changed, and get short practical suggestions.`
+
+Example output:
+
+```text
+Status
+- Today was a low-activity day relative to your recent baseline.
+
+What changed
+- Steps: 2,444 vs 7-day baseline 10,005
+- Workouts: 0 minutes, 0 workouts
+- Sleep: insufficient data
+
+Suggestions
+1. Add one easy walk today instead of trying to catch up with a hard workout.
+2. Use one fixed movement anchor, like a walk after lunch.
+3. Keep effort moderate when recovery data is missing.
+```
+
+Daily-use angle:
+
+`Many people use this with OpenClaw to get a short daily message based on their latest Apple Health data, including movement, sleep, and workout trends.`
 
 What users should know:
 
