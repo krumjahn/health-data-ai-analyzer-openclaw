@@ -26,6 +26,9 @@ This skill reads from the Mac app's local API on the same Mac. It does not conne
 - `references/local-api.md` - endpoint reference for the local Mac app API
 - `scripts/health-analyzer-brief.sh` - helper shell wrapper for local testing
 - `scripts/health-analyzer-local.py` - helper script to fetch status, daily briefs, and 7-day step/sleep comparisons from the local API
+- `scripts/check_local_setup.py` - verifies the local API is reachable and whether a saved analysis is loaded
+- `scripts/create_daily_message.py` - turns the latest local brief into a short daily OpenClaw message
+- `scripts/compare_recent_trends.py` - prints a 7-day steps and sleep comparison
 
 ## Before you use this skill
 
@@ -53,6 +56,21 @@ When the user says the skill is not working yet, walk them through this exact ap
 6. Only then retry local API requests
 
 Do not skip the selected-analysis step. The local API depends on a saved analysis chosen in the app.
+
+## First-run workflow
+
+When a user installs this skill for the first time, follow this order:
+
+1. verify the local app API is reachable
+2. verify a saved analysis is loaded
+3. if setup is incomplete, explain the exact missing step
+4. once setup is complete, generate the requested brief or comparison
+
+Recommended first command:
+
+```bash
+python3 {baseDir}/scripts/check_local_setup.py
+```
 
 ## Local API runtime
 
@@ -83,6 +101,15 @@ For a script-based local check, this bundled helper is available:
 python3 {baseDir}/scripts/health-analyzer-local.py status
 python3 {baseDir}/scripts/health-analyzer-local.py daily-brief 2026-03-19
 python3 {baseDir}/scripts/health-analyzer-local.py compare-last-7-days
+```
+
+These additional scripts are available:
+
+```bash
+python3 {baseDir}/scripts/check_local_setup.py
+python3 {baseDir}/scripts/create_daily_message.py
+python3 {baseDir}/scripts/create_daily_message.py 2026-03-19
+python3 {baseDir}/scripts/compare_recent_trends.py
 ```
 
 ## Primary workflow
@@ -130,6 +157,12 @@ If the user asks for:
 - "my latest brief"
 
 use today’s date unless they specify a different date.
+
+When you want a lightweight daily message instead of a full brief, prefer:
+
+```bash
+python3 {baseDir}/scripts/create_daily_message.py
+```
 
 ### 3. For 7-day steps and sleep comparisons
 
@@ -274,6 +307,12 @@ Suggested pattern:
 - read the latest daily brief from the Mac app
 - return one short health check-in
 
+Suggested heartbeat command:
+
+```bash
+python3 {baseDir}/scripts/create_daily_message.py
+```
+
 Example heartbeat-style output:
 
 ```text
@@ -297,6 +336,7 @@ If the API is not responding:
 ```bash
 curl "http://127.0.0.1:8765/openclaw/status"
 python3 {baseDir}/scripts/health-analyzer-local.py status
+python3 {baseDir}/scripts/check_local_setup.py
 ```
 
 If that still fails, ask the user to restart the Mac app and try again.
