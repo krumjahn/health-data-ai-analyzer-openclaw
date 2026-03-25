@@ -31,6 +31,35 @@ After you install the Mac app and load a health analysis, OpenClaw can:
 3. Install or publish the skill from `skills/health-analyzer-mac-local`.
 4. Restart OpenClaw.
 
+## Suggested ClawHub Listing
+
+Name:
+
+`Health Data AI Analyzer`
+
+Short description:
+
+`Use the Health Data AI Analyzer Mac app with OpenClaw to read daily Apple Health briefs, compare recent trends, and get concise practical suggestions.`
+
+What users should know:
+
+- requires the macOS app `Health Data AI Analyzer`
+- reads data from the local app API on your Mac
+- does not provide medical advice
+- works best after you select a saved analysis in `🦞 OpenClaw / API`
+
+## Publish To ClawHub
+
+From the repo root:
+
+```bash
+clawhub publish "./skills/health-analyzer-mac-local" \
+  --slug health-analyzer-mac-local \
+  --name "Health Data AI Analyzer" \
+  --version 1.0.0 \
+  --tags latest
+```
+
 ## Example Prompts
 
 ```text
