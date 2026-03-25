@@ -4,7 +4,7 @@ description: |
   Read Apple Health data from the Health Data AI Analyzer Mac app.
   Use when the user wants a daily health brief, a short daily OpenClaw message,
   or a recent steps and sleep comparison based on data saved on their Mac.
-metadata: {"openclaw":{"homepage":"https://github.com/krumjahn/health-data-ai-analyzer-openclaw","requires":{"bins":["bash","curl"]}}}
+metadata: {"openclaw":{"homepage":"https://github.com/krumjahn/health-data-ai-analyzer-openclaw","requires":{"bins":["bash","curl","python3"]}}}
 ---
 
 # Apple Health Daily Brief
@@ -25,6 +25,7 @@ This skill reads from the Mac app's local API on the same Mac. It does not conne
 - `README.md` - high-level setup and example prompts
 - `references/local-api.md` - endpoint reference for the local Mac app API
 - `scripts/health-analyzer-brief.sh` - helper shell wrapper for local testing
+- `scripts/health-analyzer-local.py` - helper script to fetch status, daily briefs, and 7-day step/sleep comparisons from the local API
 
 ## Before you use this skill
 
@@ -75,6 +76,14 @@ For local shell testing outside the skill, this helper script may also exist:
 ```
 
 Use the helper only for manual troubleshooting. Prefer the direct local HTTP endpoints in normal skill use.
+
+For a script-based local check, this bundled helper is available:
+
+```bash
+python3 {baseDir}/scripts/health-analyzer-local.py status
+python3 {baseDir}/scripts/health-analyzer-local.py daily-brief 2026-03-19
+python3 {baseDir}/scripts/health-analyzer-local.py compare-last-7-days
+```
 
 ## Primary workflow
 
@@ -287,6 +296,7 @@ If the API is not responding:
 
 ```bash
 curl "http://127.0.0.1:8765/openclaw/status"
+python3 {baseDir}/scripts/health-analyzer-local.py status
 ```
 
 If that still fails, ask the user to restart the Mac app and try again.
