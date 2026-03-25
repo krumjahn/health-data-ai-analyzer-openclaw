@@ -1,0 +1,7 @@
+interface:
+  display_name: "Health Data AI Analyzer"
+  short_description: "Daily brief from one localhost endpoint, with exact TUI curl fallback"
+  default_prompt: "Use $health-analyzer-mac-local for this request. Fetch the daily brief from the Health Data AI Analyzer localhost endpoint. If direct fetch is unavailable in TUI, ask me to run the exact !curl command and continue from that JSON."
+
+policy:
+  allow_implicit_invocation: true
