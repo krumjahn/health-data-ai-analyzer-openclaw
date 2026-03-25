@@ -24,11 +24,14 @@ This skill reads from the Mac app's local API on the same Mac. It does not conne
 
 - `README.md` - high-level setup and example prompts
 - `references/local-api.md` - endpoint reference for the local Mac app API
+- `references/troubleshooting.md` - quick diagnosis and common failure states
+- `references/heartbeat.md` - how to use this skill for a short daily OpenClaw health message
 - `scripts/health-analyzer-brief.sh` - helper shell wrapper for local testing
 - `scripts/health-analyzer-local.py` - helper script to fetch status, daily briefs, and 7-day step/sleep comparisons from the local API
 - `scripts/check_local_setup.py` - verifies the local API is reachable and whether a saved analysis is loaded
 - `scripts/create_daily_message.py` - turns the latest local brief into a short daily OpenClaw message
 - `scripts/compare_recent_trends.py` - prints a 7-day steps and sleep comparison
+- `scripts/create_weekly_summary.py` - prints a compact weekly summary with recent movement, sleep, and workout patterns
 
 ## Before you use this skill
 
@@ -110,6 +113,7 @@ python3 {baseDir}/scripts/check_local_setup.py
 python3 {baseDir}/scripts/create_daily_message.py
 python3 {baseDir}/scripts/create_daily_message.py 2026-03-19
 python3 {baseDir}/scripts/compare_recent_trends.py
+python3 {baseDir}/scripts/create_weekly_summary.py
 ```
 
 ## Primary workflow
@@ -194,6 +198,8 @@ Today’s health check-in
 ```
 
 This is a strong use case for users who want OpenClaw to give them a daily message about how to improve movement, sleep routine, or recovery habits.
+
+For more detail, read `references/heartbeat.md`.
 
 ## Good requests
 
@@ -313,6 +319,12 @@ Suggested heartbeat command:
 python3 {baseDir}/scripts/create_daily_message.py
 ```
 
+For a richer weekly check-in, use:
+
+```bash
+python3 {baseDir}/scripts/create_weekly_summary.py
+```
+
 Example heartbeat-style output:
 
 ```text
@@ -353,6 +365,8 @@ If the user wants to debug outside OpenClaw, suggest:
 curl "http://127.0.0.1:8765/openclaw/status"
 curl "http://127.0.0.1:8765/openclaw/daily-brief?date=2026-03-19"
 ```
+
+For more troubleshooting detail, read `references/troubleshooting.md`.
 
 ## Notes for agents
 
