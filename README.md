@@ -2,6 +2,8 @@
 
 Local OpenClaw integration for the macOS app `Health Data AI Analyzer`.
 
+Repo: `https://github.com/krumjahn/health-data-ai-analyzer-openclaw`
+
 This repo contains:
 
 - an OpenClaw skill at `skills/health-analyzer-mac-local/SKILL.md`

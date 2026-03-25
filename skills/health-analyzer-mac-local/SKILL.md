@@ -1,7 +1,7 @@
 ---
 name: health-analyzer-mac-local
 description: Use the Health Data AI Analyzer Mac app to get a daily brief from one exact localhost endpoint, then return a concise summary and 3 practical suggestions. If direct fetch is unavailable, ask for one exact `!curl` command and continue from the JSON.
-homepage: https://clawhub.ai/
+homepage: https://github.com/krumjahn/health-data-ai-analyzer-openclaw
 user-invocable: true
 command-dispatch: tool
 command-tool: health_analyzer_local
