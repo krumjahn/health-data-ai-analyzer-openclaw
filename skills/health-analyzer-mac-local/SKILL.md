@@ -1,89 +1,129 @@
 ---
-name: health-analyzer-mac-local
-description: Use the Health Data AI Analyzer Mac app with OpenClaw to read your Apple Health data, summarize what changed, and give short practical suggestions. Example: "Steps were 2,444 vs a 7-day baseline of 10,005. Add one easy walk today and keep effort moderate."
-homepage: https://github.com/krumjahn/health-data-ai-analyzer-openclaw
-user-invocable: true
-command-dispatch: tool
-command-tool: health_analyzer_local
-command-arg-mode: raw
-metadata: {"openclaw":{"requires":{"bins":["bash"]}}}
+name: apple-health-daily-brief
+description: |
+  Read Apple Health data from the Health Data AI Analyzer Mac app.
+  Use when the user wants a daily health brief, a short daily OpenClaw message,
+  or a recent steps and sleep comparison based on data saved on their Mac.
+metadata: {"openclaw":{"homepage":"https://github.com/krumjahn/health-data-ai-analyzer-openclaw","requires":{"bins":["bash","curl"]}}}
 ---
 
-# Health Data AI Analyzer
-This skill dispatches directly to the local `health_analyzer_local` tool.
+# Apple Health Daily Brief
 
-## Purpose
+Use this skill with the macOS app `Health Data AI Analyzer`.
 
-Use this skill when the user wants OpenClaw to work with Apple Health data that has already been analyzed by the macOS app `Health Data AI Analyzer`.
+This skill is for users who want OpenClaw to read their latest saved Apple Health analysis and turn it into:
 
-This skill is not a generic health chatbot. It is specifically for:
-- reading the latest saved local health analysis
-- summarizing what changed in movement, sleep, and workouts
-- generating short practical suggestions from that data
-- turning the latest analysis into a short daily OpenClaw message
+- a daily health brief
+- a short daily OpenClaw message
+- a 7-day steps and sleep comparison
+- concise practical non-medical suggestions
 
-Use it for:
-- daily health briefs
-- 3 practical non-medical suggestions
-- simple recent step and sleep comparisons
-- short daily OpenClaw messages based on the latest saved analysis
+This skill reads from the Mac app's local API on the same Mac. It does not connect directly to Apple HealthKit from OpenClaw.
 
-## Setup Requirements
+## Before you use this skill
 
-Before this skill is useful, all of these must be true:
+Confirm all of these:
 
-- the macOS app `Health Data AI Analyzer` is installed
-- the app has opened or synced a health export and completed analysis
-- the user has selected the saved analysis they want to expose in `🦞 OpenClaw / API`
-- the app’s Local API is enabled
-- the local OpenClaw plugin tool `health_analyzer_local` is installed
+- the user has the macOS app `Health Data AI Analyzer` installed
+- the user has already imported or synced Apple Health data into the app
+- the user has selected a saved analysis in `🦞 OpenClaw / API`
+- the user has enabled `Local API for OpenClaw and scripts` in the app
 
-Requirements:
-- the macOS app `Health Data AI Analyzer` is installed
-- Local API is enabled in the app
-- a saved analysis is selected in `🦞 OpenClaw / API`
+If any of those are missing, help the user fix that first.
 
-The tool reads from the local Health Data AI Analyzer API on this Mac.
+## Local API runtime
 
-The underlying local API serves data from the Mac app at `http://127.0.0.1:8765`, but this skill should use the registered OpenClaw tool instead of manually telling the user to build URLs.
+The Mac app serves its local API at:
 
-## What It Returns
+```text
+http://127.0.0.1:8765
+```
 
-For daily brief requests, return:
-- a short status summary
-- what changed versus recent baseline when available
-- 3 practical non-medical suggestions
-- explicit missing-data notes when a metric is unavailable
+The endpoints this skill should use are:
 
-For recent trend requests, return:
-- a compact comparison of recent steps and sleep
-- a short summary of the main pattern
-- practical next-step suggestions when the user asks for them
+- `GET /openclaw/status`
+- `GET /openclaw/daily-brief?date=YYYY-MM-DD`
+- `GET /steps/daily?start=YYYY-MM-DD&end=YYYY-MM-DD`
+- `GET /sleep/summary?start=YYYY-MM-DD&end=YYYY-MM-DD`
 
-When the user asks for a daily message or check-in, prefer a concise format that feels like a daily health note rather than a long report.
+## Primary workflow
 
-## Good Requests
+### 1. Check status first when setup may be incomplete
 
-Use this skill when the user asks for things like:
+Use:
+
+```bash
+curl "http://127.0.0.1:8765/openclaw/status"
+```
+
+If the response says the dataset is not loaded, tell the user to open the Mac app and select health data in `🦞 OpenClaw / API`.
+
+### 2. For daily brief requests
+
+Use:
+
+```bash
+curl "http://127.0.0.1:8765/openclaw/daily-brief?date=YYYY-MM-DD"
+```
+
+If the user does not specify a date, default to today.
+
+Return:
+
+- `Status`
+- `What changed`
+- `Suggestions`
+- `Missing data`
+
+Keep it concise and practical.
+
+### 3. For 7-day steps and sleep comparisons
+
+Use both:
+
+```bash
+curl "http://127.0.0.1:8765/steps/daily?start=YYYY-MM-DD&end=YYYY-MM-DD"
+curl "http://127.0.0.1:8765/sleep/summary?start=YYYY-MM-DD&end=YYYY-MM-DD"
+```
+
+Return:
+
+- recent daily values
+- short comparison summary
+- 2 or 3 practical suggestions only if the user asks for them
+
+### 4. For daily OpenClaw health messages
+
+Use the daily brief endpoint and compress the result into a short check-in.
+
+Good format:
+
+```text
+Today’s health check-in
+- One-sentence summary
+- 1 to 2 specific things to focus on today
+```
+
+## Good requests
+
+Use this skill for requests like:
+
 - "Give me my daily health brief for today"
 - "Give me my daily health brief for 2026-03-19 and 3 suggestions"
 - "Compare my steps and sleep over the last 7 days"
 - "Summarize what changed in my health data this week"
 - "Give me a short daily OpenClaw health message"
-
-Also use it for prompts like:
 - "How am I doing today based on my Apple Health data?"
-- "What should I focus on today based on my recent health data?"
-- "Give me a one-paragraph health check-in from my latest analysis"
 
-## What Not To Do
+## Output style
 
-- Do not invent missing values when the local analysis does not contain them.
-- Do not provide diagnosis, treatment, or medical claims.
-- Do not claim to use live Apple HealthKit directly from OpenClaw. This skill depends on the Mac app’s saved local analysis.
-- Do not ask the user to paste JSON unless the tool/runtime is truly unavailable.
+- Do not provide medical advice, diagnosis, or treatment.
+- Do not invent missing values.
+- If data is missing, say `insufficient data`.
+- Prefer plain language over technical jargon.
+- Keep daily messages short enough to feel useful as a check-in.
 
-## Example Output
+## Example daily brief
 
 ```text
 Status
@@ -98,9 +138,20 @@ Suggestions
 1. Add one easy walk today instead of trying to catch up with a hard workout.
 2. Use one fixed movement anchor, like a walk after lunch.
 3. Keep effort moderate when recovery data is missing.
+
+Missing data
+- Sleep: insufficient data
 ```
 
-## Example Weekly Comparison
+## Example daily OpenClaw message
+
+```text
+Today’s health check-in
+- Activity is below your recent baseline today.
+- Focus on one easy walk and keep effort moderate.
+```
+
+## Example recent comparison
 
 ```text
 Comparison for the last 7 days
@@ -119,16 +170,25 @@ Summary
 - Steps have been relatively stable, but sleep data is incomplete and one low-activity day stands out.
 ```
 
-## Output Style
+## Troubleshooting
 
-- Be concise by default.
-- Use plain language.
-- Prefer "insufficient data" over vague wording.
-- Keep suggestions practical, specific, and easy to act on.
-- If the user asks for a daily message, keep it short enough to feel like a useful morning check-in.
+If the API is not responding:
 
-## Notes
+1. Ask the user to open the Mac app.
+2. Ask them to go to `🦞 OpenClaw / API`.
+3. Confirm `Local API for OpenClaw and scripts` is enabled.
+4. Confirm a saved analysis is selected.
+5. Retry:
 
-- Keep the tone concise and practical.
-- Do not provide medical advice or diagnosis.
-- If data is missing, say so plainly instead of inventing values.
+```bash
+curl "http://127.0.0.1:8765/openclaw/status"
+```
+
+If that still fails, ask the user to restart the Mac app and try again.
+
+## Notes for agents
+
+- Prefer the exact local API endpoints above.
+- For daily brief requests, use the OpenClaw-specific endpoint first.
+- For trend questions, use the daily steps and sleep endpoints.
+- If the user wants a recurring daily message, suggest using OpenClaw heartbeat or automation after the basic setup works.
